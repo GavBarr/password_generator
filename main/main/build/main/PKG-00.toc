@@ -989,7 +989,7 @@
   ('libtiff-4da6744b.so.6.0.2',
    'pillow.libs/libtiff-4da6744b.so.6.0.2',
    'SYMLINK')],
- 'libpython3.10.so',
+ 'libpython3.10.so.1.0',
  False,
  False,
  False,

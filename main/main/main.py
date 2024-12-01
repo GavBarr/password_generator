@@ -1,6 +1,7 @@
 from PIL import Image
 import random
 import tkinter as tk
+from tkinter import messagebox 
 from tkinterdnd2 import DND_FILES, TkinterDnD
 
 
@@ -78,14 +79,24 @@ def password_algorithm(ascii_art):
     length = len(final_pass)
     middle = int(length/4)
     end = int(length/3)
-    final_pass=final_pass[0:7]+final_pass[middle:middle+7]+final_pass[middle+8:middle+11]+final_pass[end:end+8]
+    if password_length==8:
+        final_pass=final_pass[0:8]
+    elif password_length==12:
+        final_pass=final_pass[0:8]+final_pass[middle:middle+4]
+    elif password_length==16:
+        final_pass=final_pass[0:8]+final_pass[middle:middle+4]+final_pass[end:end+4]
     final_pass=final_pass.replace(" ","")
 
+    print(f'this is the password length{password_length}')
     return final_pass
 
 
 # Create a Tkinter window with DnD support
 class FileDropApp(TkinterDnD.Tk):
+
+
+    
+
     def __init__(self):
         super().__init__()
         self.title("Image Password Generator")
@@ -99,15 +110,73 @@ class FileDropApp(TkinterDnD.Tk):
 
         # Make the Text widget read-only but still selectable
         self.text_widget.tag_configure("center", justify="center",foreground="white")
-        self.text_widget.insert(tk.END, "Drag and drop a file here", "center")
+        self.text_widget.insert(tk.END, "Drop Password Image Here!", "center")
         self.text_widget.config(state=tk.DISABLED)
-
-
 
 
         # Bind drop event to the Text widget
         self.text_widget.drop_target_register(DND_FILES)
         self.text_widget.dnd_bind('<<Drop>>', self.on_file_drop)
+
+                # Track the currently active button
+        self.active_button = None
+
+        # Button for (8) password length
+        self.button8 = tk.Button(
+            self, text="(8) PSWD LENGTH", command=self.eight_length_pswd_button,
+            bg="#555555", fg="white", activebackground="#007acc", activeforeground="white"
+        )
+        self.button8.pack(pady=10)
+
+        # Button for (12) password length
+        self.button12 = tk.Button(
+            self, text="(12) PSWD LENGTH", command=self.twelve_length_pswd_button,
+            bg="#555555", fg="white", activebackground="#007acc", activeforeground="white"
+        )
+        self.button12.pack(pady=10)
+
+        # Button for (16) password length
+        self.button16 = tk.Button(
+            self, text="(16) PSWD LENGTH", command=self.sixteen_length_pswd_button,
+            bg="#555555", fg="white", activebackground="#007acc", activeforeground="white"
+        )
+        self.button16.pack(pady=10)
+
+    def reset_button_colors(self):
+        """Reset all button colors to the default."""
+        self.button8.config(bg="#555555")
+        self.button12.config(bg="#555555")
+        self.button16.config(bg="#555555")
+
+    def set_active_button(self, button):
+        """Set the active button and highlight it."""
+        self.reset_button_colors()  # Reset all buttons
+        button.config(bg="#007acc")  # Highlight the active button
+        self.active_button = button
+
+    def eight_length_pswd_button(self):
+        global password_length
+        response = messagebox.askquestion("Set Password Length", "This value saves for any future passwords. Are you sure?")
+        if response == "yes":
+            password_length = 8
+            self.set_active_button(self.button8)
+            print(f"Password length set to: {password_length}")
+
+    def twelve_length_pswd_button(self):
+        global password_length
+        response = messagebox.askquestion("Set Password Length", "This value saves for any future passwords. Are you sure?")
+        if response == "yes":
+            password_length = 12
+            self.set_active_button(self.button12)
+            print(f"Password length set to: {password_length}")
+
+    def sixteen_length_pswd_button(self):
+        global password_length
+        response = messagebox.askquestion("Set Password Length", "This value saves for any future passwords. Are you sure?")
+        if response == "yes":
+            password_length = 16
+            self.set_active_button(self.button16)
+            print(f"Password length set to: {password_length}")
 
     def on_file_drop(self, event):
         # Display the dropped file path
@@ -124,8 +193,8 @@ class FileDropApp(TkinterDnD.Tk):
 
         
         #self.label.config(text=f"File Dropped:\n{file_path}")
-        
 
+    
     
 
 if __name__ == "__main__":
